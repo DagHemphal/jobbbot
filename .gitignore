@@ -112,3 +112,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+id.txt
+href.txt
+cv-svenska.pdf
+cv-engelska.pdf
+test.py
+config.py
