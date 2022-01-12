@@ -10,10 +10,10 @@ class Academicwork:
 	def __init__(self):
 		self.email = config.AcademicWork.username
 		self.password = config.AcademicWork.password
+		self.driver = webdriver.Firefox()
 
 	def send_cv(self, href):
-		ff = webdriver.Firefox()
-		ff.get(href)
+		self.driver.get(href)
 		time.sleep(4)
 
 		#gör kontroll ifall cv ska vara på svenska eller engelska
@@ -21,20 +21,20 @@ class Academicwork:
 		print(cv)
 
 		#klicka på acceptera cookies
-		ff.find_element_by_css_selector('#onetrust-accept-btn-handler').click()
+		self.driver.find_element_by_css_selector('#onetrust-accept-btn-handler').click()
 
 		time.sleep(1)
 
 		#klicka på ansök
-		ff.find_elements_by_css_selector('.aw-block-button')[1].click()
+		self.driver.find_elements_by_css_selector('.aw-block-button')[1].click()
 
 		#log in
-		ff.find_element_by_name('Username').send_keys(self.email)
-		ff.find_element_by_name('Password').send_keys(self.password)
-		ff.find_element_by_css_selector('#login-btn').click()
+		self.driver.find_element_by_name('Username').send_keys(self.email)
+		self.driver.find_element_by_name('Password').send_keys(self.password)
+		self.driver.find_element_by_css_selector('#login-btn').click()
 		time.sleep(3)
 		#lägg till cv
-		ff.find_element_by_name('UploadCv').send_keys(cv)
+		self.driver.find_element_by_name('UploadCv').send_keys(cv)
 
 
 class Blocketjobb:
@@ -42,6 +42,7 @@ class Blocketjobb:
 		self.page = 1
 		#skapa fil ifall den inte finns
 		self.write_to_files("", "")
+		self.driver = webdriver.Firefox()
 
 	#kontrollerar ifall jobbansökan redan har gjorts
 	def check_id(self, id):
@@ -64,13 +65,19 @@ class Blocketjobb:
 		href_cv = "https://jobb.blocket.se" + html.find(class_=("ui column less-margin-top adwatch-container no-margin-bottom")).a.get('href')
 
 		#Kontroll för vilken rykreterare det är för att veta hur den ska skicka in cv:et
-		if href_cv.find('academic-work') != -1:
+		"""if href_cv.find('academic-work') != -1:
 			Academicwork().send_cv(href_cv)
 			#sparar id och länk
-			self.write_to_files(id, href)
+			self.write_to_files(id, href)"""
 
 		#tests
-
+		if href_cv.find('academic-work') == -1:
+			
+			self.driver.get(href_cv)
+			time.sleep(4)
+			#self.ff.close()
+			#sparar id och länk
+			self.write_to_files(id, href)
 
 	def run(self):
 		last = False
@@ -86,15 +93,16 @@ class Blocketjobb:
 				last = True 
 
 			#gå igenom alla jobb
+			#todo sortera bättre, tex ta bort chef roller, spel bolag med mera
 			for job in jobitem:
 				#leta efter id 
 				id = job.find(class_="save_item")['data-id']
 				if (not self.check_id(id)):
 					href = job.find(class_="content").a.get('href')
 					#skicka cv
-					#self.send_cv(href, id)
-					self.write_to_files(id, href)
-					print(href)
+					self.send_cv(href, id)
+					
 
 			#gå till nästa sida
 			self.page += 1
+
