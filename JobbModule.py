@@ -12,7 +12,7 @@ class Academicwork:
 		self.driver = driver
 		self.logged_in = False
 
-	def send_cv(self, href, title):
+	def send_cv(self, href):
 		self.driver.get(href)
 		time.sleep(4)
 
@@ -42,7 +42,7 @@ class Skill:
 		self.driver = driver
 		self.cookies_clicked = False
 
-	def send_cv(self, href, title):
+	def send_cv(self, href):
 		self.driver.get(href)
 		if not self.cookies_clicked:
 			self.driver.find_element_by_css_selector(".coi-banner__accept").click()
@@ -55,14 +55,14 @@ class Other:
 		self.driver = driver
 		self.skill = Skill(self.driver)
 
-	def send_cv(self, href, title):
+	def send_cv(self, href):
 		self.driver.get(href)	
 		time.sleep(1)
 		#skill
 		if self.driver.find_elements_by_css_selector(".col-6.text-right a"):
 			print("skill")
 			a = self.driver.find_element_by_css_selector(".col-6.text-right a")
-			self.skill.send_cv(a.get_attribute('href'), title)
+			self.skill.send_cv(a.get_attribute('href'))
 
 		#varbi
 		if self.driver.find_elements_by_css_selector(".apply-button"):
@@ -176,22 +176,18 @@ class Blocketjobb:
 			print("skriv y, n eller x")
 
 
-	def send_cv(self, href, title):
+	def send_cv(self, href):
 		#hämta ansöknins sida länk från blocket
 		get = requests.get(href)
 		html = BeautifulSoup(get.text,'html.parser')
 		href_cv = "https://jobb.blocket.se" + html.find(class_=("ui column less-margin-top adwatch-container no-margin-bottom")).a.get('href')
 
 		#Kontroll för vilken rykreterare det är för att veta hur den ska skicka in cv:et
-		'''if href_cv.find('academic-work') != -1:
+		if href_cv.find('academic-work') != -1:
 			self.academicwork.send_cv(href_cv)
-			#sparar id och länk
-			self.write_to_files(title, href)'''
+		else:
+			self.other.send_cv(href_cv)
 			
-		if href_cv.find('academic-work') == -1:
-			self.other.send_cv(href_cv, title)
-			#fråga vad som gjordes med ansökan
-			self.Ansokan(title, href)
 			
 
 		
@@ -220,7 +216,9 @@ class Blocketjobb:
 					#print(title)
 					#print(href)
 					#skicka cv
-					self.send_cv(href, title)
+					self.send_cv(href)
+					#fråga vad som gjordes med ansökan
+					self.Ansokan(title, href)
 					
 					
 					
