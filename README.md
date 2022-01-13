@@ -6,5 +6,5 @@ bot:en kommer gå igenom jobben klistra in cv:et namn med mera i fälten sen få
 skapa config.py och lägg in info som behövs first_name last_name email phone med mera.
 
 # starta script
-´´´python main.py´´´
+```python main.py```
 
