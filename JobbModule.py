@@ -188,9 +188,6 @@ class Blocketjobb:
 		else:
 			self.other.send_cv(href_cv)
 			
-			
-
-		
 
 	def run(self):
 		last = False
@@ -219,9 +216,7 @@ class Blocketjobb:
 					self.send_cv(href)
 					#fråga vad som gjordes med ansökan
 					self.Ansokan(title, href)
-					
-					
-					
+			
 			#gå till nästa sida
 			self.page += 1
 
